@@ -9,7 +9,7 @@
   "dependencies": {
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.9",
-    "puppeteer": "^21.6.1",
+    "puppeteer": "^21.6.1"
   },
   "type": "module",
   "author": "Okka",
