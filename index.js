@@ -25,6 +25,8 @@ const ALERT_RECEIVER = 'ozgurokka2003@gmail.com';
 const PRICE_FILE = './target-price.json';
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const chatId = process.env.CHAT_ID;
+const usersFile = './users.json';
+
 
 bot.setMyCommands([
   { command: '/start', description: 'Start and show menu' },
@@ -33,6 +35,23 @@ bot.setMyCommands([
   { command: '/checknow', description: 'Manually check price now' },
   { command: '/help', description: 'How to use the bot' }
 ]);
+
+
+function saveUser(chatId) {
+  let users = [];
+  if (fs.existsSync(usersFile)) {
+    users = JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
+  }
+  if (!users.includes(chatId)) {
+    users.push(chatId);
+    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+  }
+}
+
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+  saveUser(chatId);
+});
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
@@ -179,7 +198,16 @@ const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
     console.log('📧 Email sent!');
 
     const message = `🔥 *Garmin Fenix 8 Price Drop!*\n\nCurrent price: *CHF ${numericPrice}*\nTarget: CHF ${TARGET_PRICE}\n\n[View Product](${PRODUCT_URL})`;
-    await sendTelegram(message);
+    
+    //await sendTelegram(message);
+
+    const users = JSON.parse(fs.readFileSync('./users.json', 'utf-8'));
+    for (const userId of users) {
+      bot.sendMessage(userId, message, {
+        parse_mode: 'Markdown'
+      });
+    }
+    
     console.log('📲 Telegram message sent!');
     
   } else {
