@@ -1,8 +1,9 @@
-import TelegramBot from 'node-telegram-bot-api';
 
 
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
+const TelegramBot = require('node-telegram-bot-api');
+
 
 // Set the target URL and target price
 const PRODUCT_URL = 'https://www.digitec.ch/en/s1/product/garmin-fenix-8-51-mm-smartwatches-48003012';
