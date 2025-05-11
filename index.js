@@ -1,3 +1,4 @@
+import TelegramBot from 'node-telegram-bot-api';
 
 
 const puppeteer = require('puppeteer');
