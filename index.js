@@ -19,6 +19,8 @@ const EMAIL_CONFIG = {
 
 const ALERT_RECEIVER = 'ozgurokka2003@gmail.com';
 
+const PRICE_FILE = './target-price.json';
+
 
 const sendTelegram = async (message) => {
   const botToken = process.env.BOT_TOKEN;
