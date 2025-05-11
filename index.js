@@ -110,8 +110,16 @@ const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
 // 🔁 Run immediately
 checkPrice();
 
-setInterval(checkPrice, 1 * 60 * 60 * 1000);
+//setInterval(checkPrice, 1 * 60 * 60 * 1000);
 
 //setInterval(checkPrice, 5 * 60 * 1000); // every 5 minutes
+
+const cron = require('node-cron');
+
+// Schedule: every hour from 06:00 to 23:00
+cron.schedule('0 6-23 * * *', () => {
+  console.log('🕒 Scheduled check started at', new Date().toLocaleTimeString());
+  checkPrice();
+});
 
 
