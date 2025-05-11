@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 
 // Set the target URL and target price
 const PRODUCT_URL = 'https://www.digitec.ch/en/s1/product/garmin-fenix-8-51-mm-smartwatches-48003012';
-const TARGET_PRICE = 849.00;
+const TARGET_PRICE = 800.00;
 
 // Email configuration
 const EMAIL_CONFIG = {
