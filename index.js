@@ -18,7 +18,10 @@ const ALERT_RECEIVER = 'your.email@gmail.com';
 
 // Main price check function
 async function checkPrice() {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
   const page = await browser.newPage();
   await page.goto(PRODUCT_URL, { waitUntil: 'networkidle2' });
 
