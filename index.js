@@ -26,6 +26,37 @@ const PRICE_FILE = './target-price.json';
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const chatId = process.env.CHAT_ID;
 
+bot.setMyCommands([
+  { command: '/start', description: 'Start and show menu' },
+  { command: '/getprice', description: 'Show current target price' },
+  { command: '/setprice', description: 'Set a new target price (e.g., /setprice 749)' },
+  { command: '/checknow', description: 'Manually check price now' },
+  { command: '/help', description: 'How to use the bot' }
+]);
+
+bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
+  const firstName = msg.from.first_name || 'there';
+
+  bot.sendMessage(chatId, `👋 Hello ${firstName}! I can track Garmin Fenix 8 prices for you.
+
+Use these commands:
+🔹 /getprice – Check current target price
+🔹 /setprice 749 – Set new target price
+🔹 /checknow – Manually check the price now
+🔹 /help – Get help`, {
+    reply_markup: {
+      keyboard: [
+        ['/getprice', '/checknow'],
+        ['/setprice 749', '/help']
+      ],
+      resize_keyboard: true,
+      one_time_keyboard: false
+    }
+  });
+});
+
+
 function getTargetPrice() {
   try {
     const data = JSON.parse(fs.readFileSync(PRICE_FILE));
