@@ -9,8 +9,8 @@ const TARGET_PRICE = 849.00;
 const EMAIL_CONFIG = {
   service: 'gmail',
   auth: {
-    user: 'your.email@gmail.com',
-    pass: 'your-app-password', // Gmail App Password
+    user: 'ozgurokka2003@gmail.com',
+    pass: 'adeb gnzg jmwz vioa', // Gmail App Password
   },
 };
 
