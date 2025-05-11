@@ -1,9 +1,11 @@
+
+
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 
 // Set the target URL and target price
 const PRODUCT_URL = 'https://www.digitec.ch/en/s1/product/garmin-fenix-8-51-mm-smartwatches-48003012';
-const TARGET_PRICE = 790.00;
+const TARGET_PRICE = 800.00;
 
 // Email configuration
 const EMAIL_CONFIG = {
@@ -15,6 +17,28 @@ const EMAIL_CONFIG = {
 };
 
 const ALERT_RECEIVER = 'ozgurokka2003@gmail.com';
+
+
+const sendTelegram = async (message) => {
+  const botToken = process.env.BOT_TOKEN;
+  const chatId = process.env.CHAT_ID;
+  const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'Markdown',
+    }),
+  });
+
+  const json = await res.json();
+  if (!json.ok) {
+    console.error('❌ Telegram error:', json);
+  }
+};
 
 // Main price check function
 async function checkPrice() {
@@ -50,6 +74,11 @@ async function checkPrice() {
     });
 
     console.log('📧 Email sent!');
+
+    const message = `🔥 *Garmin Fenix 8 Price Drop!*\n\nCurrent price: *CHF ${numericPrice}*\nTarget: CHF ${TARGET_PRICE}\n\n[View Product](${PRODUCT_URL})`;
+    await sendTelegram(message);
+    console.log('📲 Telegram message sent!');
+    
   } else {
     console.log('Price is still above target. No email sent.');
   }
