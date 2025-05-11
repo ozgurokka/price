@@ -195,7 +195,7 @@ async function checkPrice() {
 
     console.log('📧 Email sent!');
 
-    const message = `🔥 *Garmin Fenix 8 Price Drop!*\n\nCurrent price: *CHF ${numericPrice}*\nTarget: CHF ${TARGET_PRICE}\n\n[View Product](${PRODUCT_URL})`;
+    const message = `🔥 *Garmin Fenix 8 Price Drop!*\n\nCurrent price: *CHF ${numericPrice}*\nTarget: CHF ${targetPrice}\n\n[View Product](${PRODUCT_URL})`;
     
     //await sendTelegram(message);
 
