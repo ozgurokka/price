@@ -14,7 +14,7 @@ const EMAIL_CONFIG = {
   },
 };
 
-const ALERT_RECEIVER = 'your.email@gmail.com';
+const ALERT_RECEIVER = 'ozgurokka2003@gmail.com';
 
 // Main price check function
 async function checkPrice() {
@@ -55,4 +55,5 @@ async function checkPrice() {
 // 🔁 Run immediately
 checkPrice();
 // Run the price check periodically (every 6 hours)
-setInterval(checkPrice, 6 * 60 * 60 * 1000);  // 6 hours
+setInterval(checkPrice, 1 * 60 * 60 * 1000);
+
