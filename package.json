@@ -1,17 +1,13 @@
 {
-  "name": "garmin-price-tracker",
+  "name": "price-alert-script",
   "version": "1.0.0",
-  "description": "Price tracker for Garmin Fenix 8 (51mm) on Digitec with email and Telegram alerts",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
     "node-cron": "^3.0.3",
-    "nodemailer": "^6.9.9",
-    "puppeteer": "^21.6.1"
-  },
-  "type": "module",
-  "author": "Okka",
-  "license": "MIT"
+    "puppeteer": "^19.0.0",
+    "nodemailer": "^6.7.0"
+  }
 }
