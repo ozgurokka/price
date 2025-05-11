@@ -7,12 +7,9 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "dotenv": "^16.3.1",
     "node-cron": "^3.0.3",
-    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.9",
     "puppeteer": "^21.6.1",
-    "node-telegram-bot-api": "^0.61.0"
   },
   "type": "module",
   "author": "Okka",
