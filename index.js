@@ -49,5 +49,7 @@ async function checkPrice() {
   await browser.close();
 }
 
+// 🔁 Run immediately
+checkPrice();
 // Run the price check periodically (every 6 hours)
 setInterval(checkPrice, 6 * 60 * 60 * 1000);  // 6 hours
