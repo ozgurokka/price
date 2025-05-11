@@ -20,7 +20,38 @@ const EMAIL_CONFIG = {
 const ALERT_RECEIVER = 'ozgurokka2003@gmail.com';
 
 const PRICE_FILE = './target-price.json';
+const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+const chatId = process.env.CHAT_ID;
 
+function getTargetPrice() {
+  try {
+    const data = JSON.parse(fs.readFileSync(PRICE_FILE));
+    return data.targetPrice;
+  } catch {
+    return parseFloat(process.env.TARGET_PRICE || TARGET_PRICE);
+  }
+}
+
+function setTargetPrice(newPrice) {
+  fs.writeFileSync(PRICE_FILE, JSON.stringify({ targetPrice: newPrice }, null, 2));
+}
+
+bot.onText(/\/setprice (.+)/, (msg, match) => {
+  const chatId = msg.chat.id;
+  const price = parseFloat(match[1]);
+
+  if (isNaN(price)) {
+    bot.sendMessage(chatId, '❌ Invalid price. Use like: /setprice 749');
+  } else {
+    setTargetPrice(price);
+    bot.sendMessage(chatId, `✅ Target price updated to CHF ${price}`);
+  }
+});
+
+bot.onText(/\/getprice/, (msg) => {
+  const price = getTargetPrice();
+  bot.sendMessage(msg.chat.id, `🎯 Current target price is CHF ${price}`);
+});
 
 const sendTelegram = async (message) => {
   const botToken = process.env.BOT_TOKEN;
@@ -45,6 +76,9 @@ const sendTelegram = async (message) => {
 
 // Main price check function
 async function checkPrice() {
+
+  const targetPrice = getTargetPrice();
+  
   const hour = new Date().getHours();
   /*if (hour >= 0 && hour < 6) {
     console.log(`⏱ Skipping check at ${hour}:00 (quiet hours)`);
@@ -80,7 +114,7 @@ const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
   console.log(`Current price: ${numericPrice} CHF`);
 
   // Check if the price is below the target
-  if (numericPrice < TARGET_PRICE) {
+  if (numericPrice < targetPrice) {
     console.log('🎯 Price is below target! Sending email...');
 
     const transporter = nodemailer.createTransport(EMAIL_CONFIG);
