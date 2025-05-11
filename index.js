@@ -5,7 +5,8 @@ const nodemailer = require('nodemailer');
 
 // Set the target URL and target price
 const PRODUCT_URL = 'https://www.digitec.ch/en/s1/product/garmin-fenix-8-51-mm-smartwatches-48003012';
-const TARGET_PRICE = 800.00;
+const TARGET_PRICE = parseFloat(process.env.TARGET_PRICE);
+const ALERT_RECEIVERS = process.env.ALERT_RECEIVERS.split(',').map(email => email.trim());
 
 // Email configuration
 const EMAIL_CONFIG = {
@@ -81,12 +82,17 @@ const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
     console.log('🎯 Price is below target! Sending email...');
 
     const transporter = nodemailer.createTransport(EMAIL_CONFIG);
-    await transporter.sendMail({
-      from: `"Price Watcher" <${EMAIL_CONFIG.auth.user}>`,
-      to: ALERT_RECEIVER,
-      subject: 'Garmin Fenix 8 Price Drop Alert',
-      text: `Current price is CHF ${numericPrice}\nTarget was CHF ${TARGET_PRICE}\n\nLink: ${PRODUCT_URL}`,
-    });
+
+
+    for (const email of ALERT_RECEIVERS) {
+      await transporter.sendMail({
+        from: `"Price Watcher" <${EMAIL_CONFIG.auth.user}>`,
+        to: email,
+        subject: '💰 Garmin Fenix 8 Price Drop Alert!',
+        text: `Current price is CHF ${numericPrice}, below your target of CHF ${TARGET_PRICE}.\n\nCheck it here: ${PRODUCT_URL}`,
+      });
+      console.log(`📧 Email sent to ${email}`);
+  }
 
     console.log('📧 Email sent!');
 
