@@ -3,6 +3,7 @@
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 const TelegramBot = require('node-telegram-bot-api');
+const fs = require('fs');
 
 
 // Set the target URL and target price
