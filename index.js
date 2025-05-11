@@ -60,5 +60,8 @@ async function checkPrice() {
 // 🔁 Run immediately
 checkPrice();
 // Run the price check periodically (every 6 hours)
-setInterval(checkPrice, 1 * 60 * 60 * 1000);
+//setInterval(checkPrice, 1 * 60 * 60 * 1000);
+
+setInterval(checkPrice, 5 * 60 * 1000); // every 5 minutes
+
 
