@@ -18,6 +18,11 @@ const ALERT_RECEIVER = 'ozgurokka2003@gmail.com';
 
 // Main price check function
 async function checkPrice() {
+  const hour = new Date().getHours();
+  if (hour >= 0 && hour < 6) {
+    console.log(`⏱ Skipping check at ${hour}:00 (quiet hours)`);
+    return;
+  }
   const browser = await puppeteer.launch({
     headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox']
