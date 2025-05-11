@@ -55,10 +55,25 @@ async function checkPrice() {
   await page.goto(PRODUCT_URL, { waitUntil: 'networkidle2' });
 
   // Get the price
-  await page.waitForSelector('button.yKEoTuX6');
+ /* await page.waitForSelector('button.yKEoTuX6');
   const priceText = await page.$eval('button.yKEoTuX6', el => el.innerText);
-  const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
+  const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));*/
 
+await page.waitForXPath('//*[@id="pageContent"]/div/div[1]/div[1]/div/div[2]/div/div[1]/span/strong/button');
+
+// Find the button using the provided XPath
+const [priceButton] = await page.$x('//*[@id="pageContent"]/div/div[1]/div[1]/div/div[2]/div/div[1]/span/strong/button');
+
+if (!priceButton) {
+  throw new Error('❌ Price button not found using XPath');
+}
+
+// Extract the price text from the button
+const priceText = await page.evaluate(button => button.innerText, priceButton);
+
+// Clean the price text to get a numeric value
+const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
+  
   console.log(`Current price: ${numericPrice} CHF`);
 
   // Check if the price is below the target
