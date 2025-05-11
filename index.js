@@ -56,6 +56,18 @@ bot.onText(/\/getprice/, (msg) => {
   bot.sendMessage(msg.chat.id, `🎯 Current target price is CHF ${price}`);
 });
 
+bot.onText(/\/checknow/, async (msg) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, '🔍 Checking current price...');
+  try {
+    await checkPrice(); // manually triggers your existing price checker
+    bot.sendMessage(chatId, '✅ Price check complete.');
+  } catch (error) {
+    bot.sendMessage(chatId, '❌ Failed to check price.');
+    console.error('Manual check error:', error);
+  }
+});
+
 const sendTelegram = async (message) => {
   const botToken = process.env.BOT_TOKEN;
   const chatId = process.env.CHAT_ID;
