@@ -171,7 +171,7 @@ const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
         from: `"Price Watcher" <${EMAIL_CONFIG.auth.user}>`,
         to: email,
         subject: '💰 Garmin Fenix 8 Price Drop Alert!',
-        text: `Current price is CHF ${numericPrice}, below your target of CHF ${TARGET_PRICE}.\n\nCheck it here: ${PRODUCT_URL}`,
+        text: `Current price is CHF ${numericPrice}, below your target of CHF ${targetPrice}.\n\nCheck it here: ${PRODUCT_URL}`,
       });
       console.log(`📧 Email sent to ${email}`);
   }
