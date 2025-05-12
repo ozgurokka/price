@@ -5,6 +5,9 @@ const nodemailer = require('nodemailer');
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
 
+let previousPrice = null;
+let latestPrice = null;
+
 
 // Set the target URL and target price
 const PRODUCT_URL = 'https://www.digitec.ch/en/s1/product/garmin-fenix-8-51-mm-smartwatches-48003012';
@@ -142,13 +145,12 @@ const sendTelegram = async (message) => {
 // Main price check function
 async function checkPrice() {
 
+  const users = JSON.parse(fs.readFileSync('./users.json', 'utf-8'));
+
   const targetPrice = getTargetPrice();
   
   const hour = new Date().getHours();
-  /*if (hour >= 0 && hour < 6) {
-    console.log(`⏱ Skipping check at ${hour}:00 (quiet hours)`);
-    return;
-  }*/
+
   const browser = await puppeteer.launch({
     headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -174,7 +176,32 @@ async function checkPrice() {
   const priceText = await page.evaluate(button => button.innerText, priceButton);
   
   // Clean the price text to get a numeric value
+  
   const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
+
+  if (latestPrice !== null) {
+    previousPrice = latestPrice;
+  }
+
+  latestPrice = numericPrice;
+  
+  if (previousPrice !== null && numericPrice < latestPrice) {
+    console.log('✅ Price dropped since last check!');
+    for (const userId of users) {
+      bot.sendMessage(userId, ` 🔔🔔🔔 📉 Price dropped to CHF ${currentPrice} from CHF ${latestPrice} `, {
+        parse_mode: 'Markdown'
+      });
+    }
+  } else if (previousPrice !== null && numericPrice > latestPrice) {
+    console.log('🔺 Price increased since last check.');
+    for (const userId of users) {
+      bot.sendMessage(userId, `📈 Price increased to CHF ${currentPrice} from CHF ${latestPrice} `, {
+        parse_mode: 'Markdown'
+      });
+    }
+  } else {
+    console.log('➖ Price unchanged.');
+  }
   
   console.log(`Current price: ${numericPrice} CHF`);
 
@@ -199,13 +226,11 @@ async function checkPrice() {
     
     //await sendTelegram(message);
 
-    const users = JSON.parse(fs.readFileSync('./users.json', 'utf-8'));
     for (const userId of users) {
       bot.sendMessage(userId, message, {
         parse_mode: 'Markdown'
       });
     }
-    
     console.log('📲 Telegram message sent!');
     
   } else {
@@ -225,8 +250,13 @@ checkPrice();
 const cron = require('node-cron');
 
 // Schedule: every hour from 06:00 to 23:00
-cron.schedule('0 6-23 * * *', () => {
+/*cron.schedule('0 6-23 * * *', () => {
   console.log('🕒 Scheduled check started at', new Date().toLocaleTimeString());
+  checkPrice();
+});*/
+
+cron.schedule('0 * * * *', () => {
+  console.log('🕒 Hourly check started at', new Date().toLocaleTimeString());
   checkPrice();
 });
 
