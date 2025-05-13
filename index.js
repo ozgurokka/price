@@ -13,6 +13,7 @@ let latestPrice = null;
 const PRODUCT_URL = 'https://www.digitec.ch/en/s1/product/garmin-fenix-8-51-mm-smartwatches-48003012';
 const TARGET_PRICE = parseFloat(process.env.TARGET_PRICE);
 const ALERT_PRICE = parseFloat(process.env.ALERT_PRICE);
+const schedule = process.env.CRON_SCHEDULE
 const ALERT_RECEIVERS = process.env.ALERT_RECEIVERS.split(',').map(email => email.trim());
 
 // Email configuration
@@ -248,8 +249,8 @@ checkPrice();
 
 const cron = require('node-cron');
 
-cron.schedule('0 * * * *', () => {
-  console.log('🕒 Hourly check started at', new Date().toLocaleTimeString());
+cron.schedule(schedule, () => {
+  console.log('🕒 Check started at', new Date().toLocaleTimeString());
   checkPrice();
 });
 
