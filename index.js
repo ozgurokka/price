@@ -12,6 +12,7 @@ let latestPrice = null;
 // Set the target URL and target price
 const PRODUCT_URL = 'https://www.digitec.ch/en/s1/product/garmin-fenix-8-51-mm-smartwatches-48003012';
 const TARGET_PRICE = parseFloat(process.env.TARGET_PRICE);
+const ALERT_PRICE = parseFloat(process.env.ALERT_PRICE);
 const ALERT_RECEIVERS = process.env.ALERT_RECEIVERS.split(',').map(email => email.trim());
 
 // Email configuration
@@ -211,6 +212,14 @@ async function checkPrice() {
   
   console.log(`Current price: ${numericPrice} CHF`);
 
+  //ALERT !!!
+  if(ALERT_PRICE > numericPrice){
+    const message = `🚨🚨🚨 🔥🔥🔥🔥 Huge drop! 🔥🔥🔥🔥🚨🚨🚨 `
+    for (let i = 1; i <= 5; i++) {
+      await sendTelegram(message);
+    }
+  }
+
   // Check if the price is below the target
   if (numericPrice < targetPrice) {
     console.log('🎯 Price is below target! Sending email...');
@@ -230,7 +239,7 @@ async function checkPrice() {
 
     const message = `🔥 *Garmin Fenix 8 Price Drop!*\n\nCurrent price: *CHF ${numericPrice}*\nTarget: CHF ${targetPrice}\n\n[View Product](${PRODUCT_URL})`;
     
-    await sendTelegram(message);
+    //await sendTelegram(message);
 
     for (const userId of users) {
       bot.sendMessage(userId, message, {
