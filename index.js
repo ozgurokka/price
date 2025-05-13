@@ -184,6 +184,12 @@ async function checkPrice() {
   }
 
   latestPrice = numericPrice;
+
+  console.log( `current price ${numericPrice} `);
+  
+  console.log( `latestPrice ${latestPrice} `);
+
+  console.log( `previousPrice ${previousPrice} `);
   
   if (previousPrice !== null && numericPrice < latestPrice) {
     console.log('✅ Price dropped since last check!');
