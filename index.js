@@ -40,18 +40,6 @@ bot.setMyCommands([
   { command: '/help', description: 'How to use the bot' }
 ]);
 
-
-function saveUser(chatId) {
-  let users = [];
-  if (fs.existsSync(usersFile)) {
-    users = JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
-  }
-  if (!users.includes(chatId)) {
-    users.push(chatId);
-    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-  }
-}
-
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   saveUser(chatId);
@@ -78,20 +66,6 @@ Use these commands:
     }
   });
 });
-
-
-function getTargetPrice() {
-  try {
-    const data = JSON.parse(fs.readFileSync(PRICE_FILE));
-    return data.targetPrice;
-  } catch {
-    return parseFloat(process.env.TARGET_PRICE || TARGET_PRICE);
-  }
-}
-
-function setTargetPrice(newPrice) {
-  fs.writeFileSync(PRICE_FILE, JSON.stringify({ targetPrice: newPrice }, null, 2));
-}
 
 bot.onText(/\/setprice (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
@@ -122,6 +96,31 @@ bot.onText(/\/checknow/, async (msg) => {
   }
 });
 
+
+function saveUser(chatId) {
+  let users = [];
+  if (fs.existsSync(usersFile)) {
+    users = JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
+  }
+  if (!users.includes(chatId)) {
+    users.push(chatId);
+    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+  }
+}
+
+function getTargetPrice() {
+  try {
+    const data = JSON.parse(fs.readFileSync(PRICE_FILE));
+    return data.targetPrice;
+  } catch {
+    return parseFloat(process.env.TARGET_PRICE || TARGET_PRICE);
+  }
+}
+
+function setTargetPrice(newPrice) {
+  fs.writeFileSync(PRICE_FILE, JSON.stringify({ targetPrice: newPrice }, null, 2));
+}
+
 const sendTelegram = async (message) => {
   const botToken = process.env.BOT_TOKEN;
   const chatId = process.env.CHAT_ID;
@@ -147,11 +146,8 @@ const sendTelegram = async (message) => {
 async function checkPrice() {
 
   const users = JSON.parse(fs.readFileSync('./users.json', 'utf-8'));
-
   const targetPrice = getTargetPrice();
-  
   const hour = new Date().getHours();
-
   const browser = await puppeteer.launch({
     headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -165,33 +161,27 @@ async function checkPrice() {
   const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));*/
 
   await page.waitForXPath('//*[@id="pageContent"]/div/div[1]/div[1]/div/div[2]/div/div[1]/span/strong/button');
-
   // Find the button using the provided XPath
   const [priceButton] = await page.$x('//*[@id="pageContent"]/div/div[1]/div[1]/div/div[2]/div/div[1]/span/strong/button');
-  
   if (!priceButton) {
     throw new Error('❌ Price button not found using XPath');
   }
 
   // Extract the price text from the button
   const priceText = await page.evaluate(button => button.innerText, priceButton);
-  
   // Clean the price text to get a numeric value
-  
   const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
 
   if (latestPrice !== null) {
     previousPrice = latestPrice;
   }
-
   latestPrice = numericPrice;
 
   console.log( `current price ${numericPrice} `);
-  
   console.log( `latestPrice ${latestPrice} `);
-
   console.log( `previousPrice ${previousPrice} `);
-  
+
+  //check if price changed
   if (previousPrice !== null && numericPrice < latestPrice) {
     console.log('✅ Price dropped since last check!');
     for (const userId of users) {
@@ -234,7 +224,6 @@ async function checkPrice() {
       });
       console.log(`📧 Email sent to ${email}`);
   }
-
     console.log('📧 Email sent!');
 
     const message = `🔥 *Garmin Fenix 8 Price Drop!*\n\nCurrent price: *CHF ${numericPrice}*\nTarget: CHF ${targetPrice}\n\n[View Product](${PRODUCT_URL})`;
@@ -251,24 +240,13 @@ async function checkPrice() {
   } else {
     console.log('Price is still above target. No email sent.');
   }
-
   await browser.close();
 }
 
 // 🔁 Run immediately
 checkPrice();
 
-//setInterval(checkPrice, 1 * 60 * 60 * 1000);
-
-//setInterval(checkPrice, 5 * 60 * 1000); // every 5 minutes
-
 const cron = require('node-cron');
-
-// Schedule: every hour from 06:00 to 23:00
-/*cron.schedule('0 6-23 * * *', () => {
-  console.log('🕒 Scheduled check started at', new Date().toLocaleTimeString());
-  checkPrice();
-});*/
 
 cron.schedule('0 * * * *', () => {
   console.log('🕒 Hourly check started at', new Date().toLocaleTimeString());
