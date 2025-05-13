@@ -194,14 +194,14 @@ async function checkPrice() {
   if (previousPrice !== null && numericPrice < latestPrice) {
     console.log('✅ Price dropped since last check!');
     for (const userId of users) {
-      bot.sendMessage(userId, ` 🔔🔔🔔 📉 Price dropped to CHF ${currentPrice} from CHF ${latestPrice} `, {
+      bot.sendMessage(userId, ` 🔔🔔🔔 📉 Price dropped to CHF ${numericPrice} from CHF ${latestPrice} `, {
         parse_mode: 'Markdown'
       });
     }
   } else if (previousPrice !== null && numericPrice > latestPrice) {
     console.log('🔺 Price increased since last check.');
     for (const userId of users) {
-      bot.sendMessage(userId, `📈 Price increased to CHF ${currentPrice} from CHF ${latestPrice} `, {
+      bot.sendMessage(userId, `📈 Price increased to CHF ${numericPrice} from CHF ${latestPrice} `, {
         parse_mode: 'Markdown'
       });
     }
@@ -230,7 +230,7 @@ async function checkPrice() {
 
     const message = `🔥 *Garmin Fenix 8 Price Drop!*\n\nCurrent price: *CHF ${numericPrice}*\nTarget: CHF ${targetPrice}\n\n[View Product](${PRODUCT_URL})`;
     
-    //await sendTelegram(message);
+    await sendTelegram(message);
 
     for (const userId of users) {
       bot.sendMessage(userId, message, {
