@@ -173,35 +173,31 @@ async function checkPrice() {
   // Clean the price text to get a numeric value
   const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
 
-  if (latestPrice !== null) {
-    previousPrice = latestPrice;
-  }
-  latestPrice = numericPrice;
+  console.log(`💰 Current price: CHF ${numericPrice}`);
+  console.log(`📦 Previous price: CHF ${previousPrice}`);
 
-  console.log( `current price ${numericPrice} `);
-  console.log( `latestPrice ${latestPrice} `);
-  console.log( `previousPrice ${previousPrice} `);
-
-  //check if price changed
-  if (previousPrice !== null && numericPrice < latestPrice) {
-    console.log('✅ Price dropped since last check!');
-    for (const userId of users) {
-      bot.sendMessage(userId, ` 🔔🔔🔔 📉 Price dropped to CHF ${numericPrice} from CHF ${latestPrice} `, {
-        parse_mode: 'Markdown'
-      });
+  if (previousPrice !== null) {
+    if (numericPrice < previousPrice) {
+      console.log('✅ Price dropped!');
+      for (const userId of users) {
+        bot.sendMessage(userId, `🔔 *Price dropped!* 📉\nFrom: CHF ${previousPrice} → To: CHF ${numericPrice}`, {
+          parse_mode: 'Markdown'
+        });
+      }
+    } else if (numericPrice > previousPrice) {
+      console.log('📈 Price increased.');
+      for (const userId of users) {
+        bot.sendMessage(userId, `📈 *Price increased!*\nFrom: CHF ${previousPrice} → To: CHF ${numericPrice}`, {
+          parse_mode: 'Markdown'
+        });
+      }
+    } else {
+      console.log('➖ Price unchanged.');
     }
-  } else if (previousPrice !== null && numericPrice > latestPrice) {
-    console.log('🔺 Price increased since last check.');
-    for (const userId of users) {
-      bot.sendMessage(userId, `📈 Price increased to CHF ${numericPrice} from CHF ${latestPrice} `, {
-        parse_mode: 'Markdown'
-      });
-    }
-  } else {
-    console.log('➖ Price unchanged.');
   }
-  
-  console.log(`Current price: ${numericPrice} CHF`);
+
+  // Save current price for next comparison
+  previousPrice = numericPrice;
 
   //ALERT !!!
   if(ALERT_PRICE > numericPrice){
