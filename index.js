@@ -7,6 +7,7 @@ const fs = require('fs');
 
 let previousPrice = null;
 let latestPrice = null;
+const numericPrice;
 
 
 // Set the target URL and target price
@@ -35,8 +36,8 @@ const usersFile = './users.json';
 
 bot.setMyCommands([
   { command: '/start', description: 'Start and show menu' },
-  { command: '/getprice', description: 'Show current target price' },
-  { command: '/setprice', description: 'Set a new target price (e.g., /setprice 749)' },
+  { command: '/gettargetprice', description: 'Show current target price' },
+  { command: '/settargetprice', description: 'Set a new target price (e.g., /setprice 749)' },
   { command: '/checknow', description: 'Manually check price now' },
   { command: '/help', description: 'How to use the bot' }
 ]);
@@ -68,7 +69,7 @@ Use these commands:
   });
 });
 
-bot.onText(/\/setprice (.+)/, (msg, match) => {
+bot.onText(/\/settargetprice (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
   const price = parseFloat(match[1]);
 
@@ -80,7 +81,7 @@ bot.onText(/\/setprice (.+)/, (msg, match) => {
   }
 });
 
-bot.onText(/\/getprice/, (msg) => {
+bot.onText(/\/gettargetprice/, (msg) => {
   const price = getTargetPrice();
   bot.sendMessage(msg.chat.id, `🎯 Current target price is CHF ${price}`);
 });
@@ -90,7 +91,7 @@ bot.onText(/\/checknow/, async (msg) => {
   bot.sendMessage(chatId, '🔍 Checking current price...');
   try {
     await checkPrice(); // manually triggers your existing price checker
-    bot.sendMessage(chatId, '✅ Price check complete.');
+    bot.sendMessage(chatId, `✅ Price check complete. Current price is CHF ${numericPrice}`);
   } catch (error) {
     bot.sendMessage(chatId, '❌ Failed to check price.');
     console.error('Manual check error:', error);
@@ -171,7 +172,7 @@ async function checkPrice() {
   // Extract the price text from the button
   const priceText = await page.evaluate(button => button.innerText, priceButton);
   // Clean the price text to get a numeric value
-  const numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
+  numericPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
 
   console.log(`💰 Current price: CHF ${numericPrice}`);
   console.log(`📦 Previous price: CHF ${previousPrice}`);
