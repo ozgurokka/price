@@ -7,7 +7,7 @@ const fs = require('fs');
 
 let previousPrice = null;
 let latestPrice = null;
-const numericPrice;
+const numericPrice = 0;
 
 
 // Set the target URL and target price
