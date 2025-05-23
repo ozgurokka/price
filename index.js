@@ -54,14 +54,14 @@ bot.onText(/\/start/, (msg) => {
 bot.sendMessage(chatId, `👋 Hello ${firstName}! I can track Garmin Fenix 8 prices for you.
 
 Use these commands:
-🔹 /getprice – Check current target price
-🔹 /setprice 749 – Set new target price
+🔹 /gettargetprice – Check current target price
+🔹 /settargetprice 749 – Set new target price
 🔹 /checknow – Manually check the price now
 🔹 /help – Get help`, {
     reply_markup: {
       keyboard: [
-        ['/getprice', '/checknow'],
-        ['/setprice 749', '/help']
+        ['/gettargetprice', '/checknow'],
+        ['/settargetprice 780', '/help']
       ],
       resize_keyboard: true,
       one_time_keyboard: false
