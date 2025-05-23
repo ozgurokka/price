@@ -51,7 +51,7 @@ bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || 'there';
 
-  bot.sendMessage(chatId, `👋 Hello ${firstName}! I can track Garmin Fenix 8 prices for you.
+bot.sendMessage(chatId, `👋 Hello ${firstName}! I can track Garmin Fenix 8 prices for you.
 
 Use these commands:
 🔹 /getprice – Check current target price
