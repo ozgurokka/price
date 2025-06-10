@@ -156,7 +156,7 @@ async function checkPrice() {
   });*/
   const browser = await puppeteer.launch({
     headless: 'new', // yeni headless mod
-    executablePath: '/usr/bin/chromium', // bazen '/usr/bin/chromium-browser' olabilir
+    executablePath: '/usr/bin/chromium-browser', // bazen '/usr/bin/chromium-browser' olabilir
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
