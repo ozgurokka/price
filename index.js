@@ -150,9 +150,23 @@ async function checkPrice() {
   const users = JSON.parse(fs.readFileSync('./users.json', 'utf-8'));
   const targetPrice = getTargetPrice();
   const hour = new Date().getHours();
-  const browser = await puppeteer.launch({
+  /*const browser = await puppeteer.launch({
     headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });*/
+  const browser = await puppeteer.launch({
+    headless: 'new', // yeni headless mod
+    executablePath: '/usr/bin/chromium', // bazen '/usr/bin/chromium-browser' olabilir
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process',
+      '--disable-gpu',
+    ],
   });
   const page = await browser.newPage();
   await page.goto(PRODUCT_URL, { waitUntil: 'networkidle2' });
